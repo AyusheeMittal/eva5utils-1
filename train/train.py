@@ -1,6 +1,6 @@
 
 
-def train_loop(epochs, trainloader, model, device, optimizer, criterion, scheduler):
+def train_loop(epochs, trainloader, model, device, optimizer, criterion, scheduler=None):
     for epoch in range(epochs):  # loop over the dataset multiple times
         # total=0
         running_loss = 0.0
@@ -30,5 +30,6 @@ def train_loop(epochs, trainloader, model, device, optimizer, criterion, schedul
             # running_loss = 0.0
         print('[%d, %5d] loss: %.3f' %
               (epoch + 1, i + 1, running_loss))
-        
-        scheduler.step()
+
+        if scheduler:
+            scheduler.step()
