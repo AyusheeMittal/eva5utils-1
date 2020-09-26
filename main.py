@@ -19,8 +19,10 @@ cuda_batch_size=128
 cpu_batch_size = 4
 num_workers = 4
 
+# ToDo: Create separate transforms for train and test...
 transforms = model7_transforms()
-(train_loader, test_loader, classes) = dataloaders.load_cifar10(transforms, cuda_batch_size, cpu_batch_size, num_workers)
+(train_loader, test_loader, classes) = \
+    dataloaders.load_cifar10(transforms, transforms, cuda_batch_size, cpu_batch_size, num_workers)
 
 plot_samples(train_loader)
 
