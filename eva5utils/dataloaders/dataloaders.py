@@ -1,4 +1,4 @@
-from utils import DEVICE, IS_CUDA
+from eva5utils.utils import DEVICE, IS_CUDA
 import torch
 import torchvision
 

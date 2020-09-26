@@ -1,2 +1,2 @@
-from model.Model7 import Model7
-from model.ResNet import *
+from .Model7 import *
+from .ResNet import *

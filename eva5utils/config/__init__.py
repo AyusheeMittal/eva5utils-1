@@ -1,1 +1,1 @@
-from config.ModelConfig import ModelConfig
+from .ModelConfig import *
