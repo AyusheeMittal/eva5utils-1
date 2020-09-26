@@ -5,8 +5,10 @@ from torchvision.utils import make_grid
 import numpy as np
 import matplotlib.pyplot as plt
 
-from gradcam import gradcam as G
-from gradcam import utils as U
+#from gradcam import gradcam as G
+#from gradcam import utils as U
+from .gradcam import GradCAM
+from .gradcam_utils import visualize_cam
 
 IS_CUDA = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if IS_CUDA else "cpu")
@@ -46,7 +48,7 @@ def accuracy_per_class(model, classes, testloader, device):
 def show_gradcam(model, model_type, layer, testloader, classes, samples=5):
     #config = dict(model_type='resnet', arch=model, layer_name='layer4')
     config = dict(model_type=model_type, arch=model, layer_name=layer)
-    gradcam = G.GradCAM.from_config(**config)
+    gradcam = GradCAM.from_config(**config)
 
     dataiter = iter(testloader)
     images, labels = dataiter.next()
@@ -56,7 +58,7 @@ def show_gradcam(model, model_type, layer, testloader, classes, samples=5):
     for i in range(samples):
         imagestodisplay = []
         mask, _ = gradcam(images[i][np.newaxis, :].to(DEVICE))
-        heatmap, result = U.visualize_cam(mask, images[i][np.newaxis, :])
+        heatmap, result = visualize_cam(mask, images[i][np.newaxis, :])
         imagestodisplay.extend([images[i].cpu(), heatmap, result])
         grid_image = make_grid(imagestodisplay, nrow=3)
         plt.figure(figsize=(20, 20))

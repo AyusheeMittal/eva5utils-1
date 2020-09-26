@@ -23,7 +23,7 @@ VERSION = '0.1.0'
 # What packages are required for this module to be executed?
 REQUIRED = [
     # 'requests', 'maya', 'records',
-    'torch', 'numpy', 'matplotlib', 'torchsummary', 'torchvision', 'pytorch-gradcam', 'albumentations',
+    'torch', 'numpy', 'matplotlib', 'torchsummary', 'torchvision', 'albumentations',
     'opencv-python', 'Pillow'
 ]
 
