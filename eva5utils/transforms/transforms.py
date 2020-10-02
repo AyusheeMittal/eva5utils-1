@@ -31,3 +31,11 @@ def model9_resnet_test_transforms():
     ])
   return lambda img: transforms(image = np.array(img))["image"]
 
+def model10_resnet_train_transforms():
+  transforms = C.Compose([
+    A.HorizontalFlip(),
+    #A.RandomCrop(height=30, width=30, p=5.0),
+    A.Cutout(num_holes=1, max_h_size=16, max_w_size=16),
+    P.ToTensor(dict (mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)))
+    ])
+  return lambda img: transforms(image = np.array(img))["image"]
