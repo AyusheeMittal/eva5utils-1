@@ -1,6 +1,6 @@
 
 
-def train_loop(epochs, trainloader, model, device, optimizer, criterion, scheduler=None, stepWithLoss=false):
+def train_loop(epochs, trainloader, model, device, optimizer, criterion, scheduler=None, stepWithLoss=False):
     for epoch in range(epochs):  # loop over the dataset multiple times
         running_loss = 0.0
         for i, (data, labels) in enumerate(trainloader, 0):
