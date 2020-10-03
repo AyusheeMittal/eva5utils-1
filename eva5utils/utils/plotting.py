@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import torchvision
-from gradcam import GradCAM
+from .gradcam import GradCAM
 from .gradcam_utils import visualize_cam
 from .helpers import DEVICE
 import torch
