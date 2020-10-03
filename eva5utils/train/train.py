@@ -1,6 +1,8 @@
 
 
 def train_loop(epochs, trainloader, model, device, optimizer, criterion, scheduler=None, stepWithLoss=False):
+    loss_accumulator = []
+
     for epoch in range(epochs):  # loop over the dataset multiple times
         running_loss = 0.0
         for i, (data, labels) in enumerate(trainloader, 0):
@@ -22,8 +24,11 @@ def train_loop(epochs, trainloader, model, device, optimizer, criterion, schedul
         print('[%d, %5d] loss: %.3f' %
               (epoch + 1, i + 1, running_loss))
 
+        loss_accumulator.append(running_loss)
+
         if scheduler:
             if stepWithLoss:
                 scheduler.step(loss)
             else:
                 scheduler.step()
+    return loss_accumulator

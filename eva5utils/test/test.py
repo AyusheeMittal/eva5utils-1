@@ -6,6 +6,8 @@ def test_loop(testloader, model, device, criterion):
     total = 0
     test_loss = 0
     running_loss = 0
+    loss_accumulator = []
+
     with torch.no_grad():
         for data, label in testloader:
             images, labels = data.to(device), label.to(device)
@@ -13,8 +15,10 @@ def test_loop(testloader, model, device, criterion):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-            test_loss += criterion(outputs, labels)
+            loss = criterion(outputs, labels)
+            test_loss += loss
             running_loss += test_loss.item()
-
+            loss_accumulator.append(loss)
     print('Accuracy of the network on the 10000 test images: %d %%, Test loss:' % (
             100 * correct / total), running_loss)
+    return loss_accumulator
