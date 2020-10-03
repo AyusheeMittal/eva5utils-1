@@ -66,3 +66,24 @@ def show_gradcam(model, model_type, layer, testloader, classes, samples=5):
         plt.show()
         print(f"Prediction : {classes[predicted[i]]}, Actual : {classes[labels[i]]}")
 
+
+def find_misclassified(model, testloader, numSamples=25):
+    incorrect_indexes = {}  # {23: {'actual': 1, 'predicted': 4}}
+    model.eval()
+    count = 0
+    with torch.no_grad():
+        for data, target in testloader:
+            data, target = data.to(DEVICE), target.to(DEVICE)
+            output = model(data)
+            pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+
+            for sampleno in range(data.shape[0]):
+                if (target[sampleno] != pred[sampleno]):
+                    count += 1
+                    # print("Index=", sampleno, ", Actual=", target[sampleno].cpu().numpy(), ", Predicted: ", pred[sampleno].cpu().numpy()[0])
+                    incorrect_indexes[sampleno] = {'actual': target[sampleno].cpu().numpy(),
+                                                   'predicted': pred[sampleno].cpu().numpy()[0],
+                                                   'data': data[sampleno].cpu().numpy()}
+
+            if count == numSamples:
+                break

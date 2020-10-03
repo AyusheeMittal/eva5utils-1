@@ -14,5 +14,6 @@ Import functions from eva5utils as required:
 To Build and install on local:  
 python setup.py bdist_wheel   
 python -m pip install dist/eva5utils-0.1.0-py3-none-any.whl   
-
+or  
+pip install .  
 
