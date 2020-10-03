@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import torchvision
-
+from gradcam import GradCAM
+from .gradcam_utils import visualize_cam
+from .helpers import DEVICE
+import torch
 
 # functions to show an image
 def imshow(img):
@@ -17,8 +20,9 @@ def plot_samples(dataloader):
     imshow(torchvision.utils.make_grid(images))
 
 
-def plot_misclassified(incorrect_indexes):
+def plot_misclassified_gradcam(model, incorrect_indexes, classes, layer, model_type='resnet'):
     # {23: {'actual': 1, 'predicted': 4}}
+    gradcam = GradCAM.from_config(model_type=model_type, arch=model, layer_name=layer)
 
     x = 0
     y = 0
@@ -27,15 +31,17 @@ def plot_misclassified(incorrect_indexes):
     fig.subplots_adjust(wspace=0.7)
     images = list(incorrect_indexes.items())[:25]
     for index, results in images:
-        # print(index)
         img = results['data']
-        img = np.squeeze(img)
-        actual_class = results['actual']
-        predicted_class = results['predicted']
+        img = torch.from_numpy(img)
 
-        #plt.savefig("misclassified.png")
-        #files.download("misclassified.png")
-        axs[x, y].imshow(img)
+        actual_class = classes[results['actual']]
+        predicted_class = classes[results['predicted']]
+
+        mask, _ = gradcam(img[np.newaxis, :].to(DEVICE))
+        heatmap, result = visualize_cam(mask, img[np.newaxis, :])
+        result = np.transpose(result.cpu().numpy(), (1, 2, 0))
+
+        axs[x, y].imshow(result)
         axs[x, y].set_title('Actual Class:' + str(actual_class) + "\nPredicted class: " + str(predicted_class))
 
         if y == 4:
