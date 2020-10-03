@@ -26,7 +26,7 @@ def plot_misclassified_gradcam(model, incorrect_indexes, classes, layer, model_t
 
     x = 0
     y = 0
-    fig, axs = plt.subplots(5, 5, figsize=(15, 15))
+    fig, axs = plt.subplots(5, 5, figsize=(20, 20))
     plt.setp(axs, xticks=[], yticks=[])
     fig.subplots_adjust(wspace=0.7)
     images = list(incorrect_indexes.items())[:25]
@@ -49,3 +49,17 @@ def plot_misclassified_gradcam(model, incorrect_indexes, classes, layer, model_t
             y = 0
         else:
             y += 1
+
+
+def plot_train_vs_test(train_list, test_list, label):
+  train_range = range(0, len(train_list))
+  test_range = range(0, len(test_list))
+
+  fig, ax = plt.subplots()
+  ax.plot(train_range, train_list, label='Training ' + label, color='blue')
+  ax.plot(test_range, test_list, label='Test ' + label, color = 'red')
+  legend = ax.legend(loc='center right', fontsize='x-large')
+  plt.xlabel('epoch')
+  plt.ylabel(label)
+  plt.title('Training and Test ' + label)
+  plt.show()
