@@ -7,6 +7,7 @@ def test_loop(testloader, model, device, criterion):
     test_loss = 0
     running_loss = 0
     loss_accumulator = []
+    acc_accumulator = []
 
     with torch.no_grad():
         for data, label in testloader:
@@ -19,6 +20,7 @@ def test_loop(testloader, model, device, criterion):
             test_loss += loss
             running_loss += test_loss.item()
             loss_accumulator.append(loss)
+            acc_accumulator.append(100 * correct / total)
     print('Accuracy of the network on the 10000 test images: %d %%, Test loss:' % (
-            100 * correct / total), running_loss)
-    return loss_accumulator
+            100.0 * correct / total), running_loss)
+    return loss_accumulator, acc_accumulator
