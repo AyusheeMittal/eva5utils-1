@@ -1,6 +1,6 @@
 
 
-def train_loop(epochs, trainloader, model, device, optimizer, criterion, scheduler=None):
+def train_loop(epochs, trainloader, model, device, optimizer, criterion, scheduler=None, stepWithLoss=false):
     for epoch in range(epochs):  # loop over the dataset multiple times
         running_loss = 0.0
         for i, (data, labels) in enumerate(trainloader, 0):
@@ -23,4 +23,7 @@ def train_loop(epochs, trainloader, model, device, optimizer, criterion, schedul
               (epoch + 1, i + 1, running_loss))
 
         if scheduler:
-            scheduler.step()
+            if stepWithLoss:
+                scheduler.step(loss)
+            else:
+                scheduler.step()
