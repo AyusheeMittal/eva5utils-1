@@ -87,3 +87,4 @@ def find_misclassified(model, testloader, numSamples=25):
 
             if count == numSamples:
                 break
+    return incorrect_indexes
