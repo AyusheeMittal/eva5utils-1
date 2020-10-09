@@ -4,7 +4,7 @@ from albumentations.pytorch import transforms as P
 from albumentations.augmentations import transforms as A
 from albumentations.core import composition as C
 import numpy as np
-
+import cv2
 
 def model7_transforms():
     transform = transforms.Compose(
