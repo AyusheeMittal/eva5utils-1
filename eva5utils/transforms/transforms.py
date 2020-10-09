@@ -51,3 +51,4 @@ def model11_davidnet_train_transforms():
     P.ToTensor(dict (mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)))
     ])
   return lambda img: transforms(image = np.array(img))["image"]
+
