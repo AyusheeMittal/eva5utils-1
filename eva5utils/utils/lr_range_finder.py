@@ -488,12 +488,12 @@ class LRRangeFinder(object):
         # properly so the behaviour is the expected
         lrs = self.history["lr"]
         accuracies = self.history["acc"]
-        if skip_end == 0:
-            lrs = lrs[skip_start:]
-            accuracies = accuracies[skip_start:]
-        else:
-            lrs = lrs[skip_start:-skip_end]
-            accuracies = accuracies[skip_start:-skip_end]
+        #if skip_end == 0:
+            #lrs = lrs[skip_start:]
+            #accuracies = accuracies[skip_start:]
+        #else:
+            #lrs = lrs[skip_start:-skip_end]
+            #accuracies = accuracies[skip_start:-skip_end]
 
         # Create the figure and axes object if axes was not already given
         fig = None
@@ -505,32 +505,32 @@ class LRRangeFinder(object):
 
         # Plot the suggested LR
         if suggest_lr:
-            # 'steepest': the point with steepest gradient (maximal gradient)
-            print("LR suggestion: steepest gradient")
-            max_grad_idx = None
+            # 'Maximum': the point with maximam accuracy
+            print("LR suggestion: Maximum Accuracy")
+            max_idx = None
             try:
-                max_grad_idx = (np.gradient(np.array(accuracies))).argmax()
+                max_idx = (np.array(accuracies)).argmax()
             except ValueError:
                 print(
-                    "Failed to compute the gradients, there might not be enough points."
+                    "Failed to compute, there might not be enough points."
                 )
-            if max_grad_idx is not None:
-                print("Suggested LR: {:.2E}".format(lrs[max_grad_idx]))
+            if max_idx is not None:
+                print("Suggested LR: {:.2E}".format(lrs[max_idx]))
                 ax.scatter(
-                    lrs[max_grad_idx],
-                    accuracies[max_grad_idx],
+                    lrs[max_idx],
+                    accuracies[max_idx],
                     s=75,
                     marker="o",
                     color="red",
                     zorder=3,
-                    label="steepest gradient",
+                    label="Maximum Accuracy",
                 )
                 ax.legend()
 
         if log_lr:
             ax.set_xscale("log")
         ax.set_xlabel("Learning rate")
-        ax.set_ylabel("Accuracies")
+        ax.set_ylabel("Accuracy")
 
         if show_lr is not None:
             ax.axvline(x=show_lr, color="red")
@@ -539,8 +539,8 @@ class LRRangeFinder(object):
         if fig is not None:
             plt.show()
 
-        if suggest_lr and max_grad_idx:
-            return ax, lrs[max_grad_idx]
+        if suggest_lr and max_idx:
+            return ax, lrs[max_idx]
         else:
             return ax
 
