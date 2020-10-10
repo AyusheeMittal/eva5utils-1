@@ -378,6 +378,8 @@ class LRRangeFinder(object):
             # Accuracy
             _, preds = torch.max(outputs, 1)
             running_corrects += torch.sum(preds == labels.data).item()
+            processed += len(inputs)
+
 
             # Backward pass
             if IS_AMP_AVAILABLE and hasattr(self.optimizer, "_amp_stash"):
