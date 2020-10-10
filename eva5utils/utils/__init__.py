@@ -3,3 +3,4 @@ from .plotting import plot_samples, plot_misclassified_gradcam, plot_train_vs_te
 from .lr_finder import  LRFinder, TrainDataLoaderIter, ValDataLoaderIter
 from .gradcam import GradCAM
 from .gradcam_utils import visualize_cam
+from .lr_range_finder import LRRangeFinder
