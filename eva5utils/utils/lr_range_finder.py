@@ -530,7 +530,7 @@ class LRRangeFinder(object):
         if log_lr:
             ax.set_xscale("log")
         ax.set_xlabel("Learning rate")
-        ax.set_ylabel("Loss")
+        ax.set_ylabel("Accuracies")
 
         if show_lr is not None:
             ax.axvline(x=show_lr, color="red")
@@ -539,7 +539,7 @@ class LRRangeFinder(object):
         if fig is not None:
             plt.show()
 
-        if suggest_lr and min_grad_idx:
+        if suggest_lr and max_grad_idx:
             return ax, lrs[max_grad_idx]
         else:
             return ax
