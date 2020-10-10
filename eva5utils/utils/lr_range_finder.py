@@ -518,7 +518,7 @@ class LRRangeFinder(object):
                 print("Suggested LR: {:.2E}".format(lrs[max_grad_idx]))
                 ax.scatter(
                     lrs[max_grad_idx],
-                    losses[max_grad_idx],
+                    accuracies[max_grad_idx],
                     s=75,
                     marker="o",
                     color="red",
