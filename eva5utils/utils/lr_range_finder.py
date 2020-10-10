@@ -149,8 +149,9 @@ class LRRangeFinder(object):
 
         self.model = model
         self.criterion = criterion
-        self.history = {"lr": [], "loss": []}
+        self.history = {"lr": [], "acc": []}
         self.best_loss = None
+        self.best_acc = None
         self.memory_cache = memory_cache
         self.cache_dir = cache_dir
 
@@ -253,8 +254,9 @@ class LRRangeFinder(object):
         """
 
         # Reset test results
-        self.history = {"lr": [], "loss": []}
+        self.history = {"lr": [], "acc": []}
         self.best_loss = None
+        self.best_acc = None
 
         # Move the model to the proper device
         self.model.to(self.device)
@@ -302,14 +304,14 @@ class LRRangeFinder(object):
                 )
 
         for iteration in tqdm(range(num_iter)):
-            # Train on batch and retrieve loss
-            loss = self._train_batch(
+            # Train on batch and retrieve accuracy 
+            acc = self._train_batch(
                 train_iter,
                 accumulation_steps,
                 non_blocking_transfer=non_blocking_transfer,
             )
             if val_loader:
-                loss = self._validate(
+                acc = self._validate(
                     val_iter, non_blocking_transfer=non_blocking_transfer
                 )
 
@@ -317,20 +319,20 @@ class LRRangeFinder(object):
             self.history["lr"].append(lr_schedule.get_lr()[0])
             lr_schedule.step()
 
-            # Track the best loss and smooth it if smooth_f is specified
+            # Track the best accuracy and smooth it if smooth_f is specified
             if iteration == 0:
-                self.best_loss = loss
+                self.best_acc = acc
             else:
                 if smooth_f > 0:
-                    loss = smooth_f * loss + (1 - smooth_f) * self.history["loss"][-1]
-                if loss < self.best_loss:
-                    self.best_loss = loss
+                    acc = smooth_f * acc + (1 - smooth_f) * self.history["acc"][-1]
+                if acc > self.best_acc:
+                    self.best_acc = acc
 
             # Check if the loss has diverged; if it has, stop the test
-            self.history["loss"].append(loss)
-            if loss > diverge_th * self.best_loss:
-                print("Stopping early, the loss has diverged")
-                break
+            self.history["acc"].append(acc)
+            #if loss > diverge_th * self.best_loss:
+                #print("Stopping early, the loss has diverged")
+                #break
 
         print("Learning rate search finished. See the graph with {finder_name}.plot()")
 
@@ -354,6 +356,10 @@ class LRRangeFinder(object):
     def _train_batch(self, train_iter, accumulation_steps, non_blocking_transfer=True):
         self.model.train()
         total_loss = None  # for late initialization
+        total_acc = None
+        
+        running_corrects = 0
+        processed = 0
 
         self.optimizer.zero_grad()
         for i in range(accumulation_steps):
@@ -368,6 +374,10 @@ class LRRangeFinder(object):
 
             # Loss should be averaged in each step
             loss /= accumulation_steps
+            
+            # Accuracy
+            _, preds = torch.max(outputs, 1)
+            running_corrects += torch.sum(preds == labels.data).item()
 
             # Backward pass
             if IS_AMP_AVAILABLE and hasattr(self.optimizer, "_amp_stash"):
@@ -388,8 +398,9 @@ class LRRangeFinder(object):
                 total_loss += loss
 
         self.optimizer.step()
+        total_acc = 100.0*running_corrects/processed
 
-        return total_loss.item()
+        return total_acc
 
     def _move_to_device(self, inputs, labels, non_blocking=True):
         def move(obj, device, non_blocking=True):
@@ -411,6 +422,10 @@ class LRRangeFinder(object):
     def _validate(self, val_iter, non_blocking_transfer=True):
         # Set model to evaluation mode and disable gradient computation
         running_loss = 0
+        running_acc = 0
+        
+        running_corrects = 0
+        
         self.model.eval()
         with torch.no_grad():
             for inputs, labels in val_iter:
@@ -423,8 +438,11 @@ class LRRangeFinder(object):
                 outputs = self.model(inputs)
                 loss = self.criterion(outputs, labels)
                 running_loss += loss.item() * len(labels)
+                _, preds = torch.max(outputs, 1)
+                running_corrects += torch.sum(preds == labels.data).item()
+                running_acc = 100.0*running_corrects/len(val_iter.dataset)
 
-        return running_loss / len(val_iter.dataset)
+        return running_acc #running_loss / len(val_iter.dataset)
 
     def plot(
         self,
@@ -467,13 +485,13 @@ class LRRangeFinder(object):
         # Get the data to plot from the history dictionary. Also, handle skip_end=0
         # properly so the behaviour is the expected
         lrs = self.history["lr"]
-        losses = self.history["loss"]
+        accuracies = self.history["acc"]
         if skip_end == 0:
             lrs = lrs[skip_start:]
-            losses = losses[skip_start:]
+            accuracies = accuracies[skip_start:]
         else:
             lrs = lrs[skip_start:-skip_end]
-            losses = losses[skip_start:-skip_end]
+            accuracies = accuracies[skip_start:-skip_end]
 
         # Create the figure and axes object if axes was not already given
         fig = None
@@ -481,24 +499,24 @@ class LRRangeFinder(object):
             fig, ax = plt.subplots()
 
         # Plot loss as a function of the learning rate
-        ax.plot(lrs, losses)
+        ax.plot(lrs, accuracies)
 
         # Plot the suggested LR
         if suggest_lr:
-            # 'steepest': the point with steepest gradient (minimal gradient)
+            # 'steepest': the point with steepest gradient (maximal gradient)
             print("LR suggestion: steepest gradient")
-            min_grad_idx = None
+            max_grad_idx = None
             try:
-                min_grad_idx = (np.gradient(np.array(losses))).argmin()
+                max_grad_idx = (np.gradient(np.array(accuracies))).argmax()
             except ValueError:
                 print(
                     "Failed to compute the gradients, there might not be enough points."
                 )
-            if min_grad_idx is not None:
-                print("Suggested LR: {:.2E}".format(lrs[min_grad_idx]))
+            if max_grad_idx is not None:
+                print("Suggested LR: {:.2E}".format(lrs[max_grad_idx]))
                 ax.scatter(
-                    lrs[min_grad_idx],
-                    losses[min_grad_idx],
+                    lrs[max_grad_idx],
+                    losses[max_grad_idx],
                     s=75,
                     marker="o",
                     color="red",
@@ -520,7 +538,7 @@ class LRRangeFinder(object):
             plt.show()
 
         if suggest_lr and min_grad_idx:
-            return ax, lrs[min_grad_idx]
+            return ax, lrs[max_grad_idx]
         else:
             return ax
 
