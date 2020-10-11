@@ -48,7 +48,7 @@ def model11_davidnet_train_transforms():
         value=0.5),
     A.RandomCrop(height=32, width=32, p=1),
     A.HorizontalFlip(p=0.5),
-    A.Cutout(num_holes=1, max_h_size=8, max_w_size=8),
+    A.Cutout(num_holes=1, max_h_size=8, max_w_size=8, p=1),
     P.ToTensor(dict (mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)))
     ])
   return lambda img: transform(image = np.array(img))["image"]
