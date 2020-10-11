@@ -5,6 +5,7 @@ from .gradcam import GradCAM
 from .gradcam_utils import visualize_cam
 from .helpers import DEVICE
 import torch
+import math
 
 # functions to show an image
 def imshow(img):
@@ -63,3 +64,32 @@ def plot_train_vs_test(train_list, test_list, label):
   plt.ylabel(label)
   plt.title('Training and Test ' + label)
   plt.show()
+
+
+def get_cycle_lr(iterations, step_size, lr_max, lr_min):
+  cycle = math.floor(1 + iterations / (2.0 * step_size))
+  x = math.fabs((iterations / step_size) - (2 * cycle) + 1)
+  lr = lr_min + (lr_max - lr_min) * (1 - x)
+  print("cycle=", str(cycle), ", x=", str(x), ", lr=", lr)
+  return lr
+
+
+def plot_cycle_lr(samples, batch_size, epochs, lr_max, lr_min):
+  iterations = math.ceil(samples/batch_size) # 98
+  step_size = epochs/2.0
+  y_value = []
+  #
+  for i in range(iterations):
+      lr = get_cycle_lr(i, step_size, lr_max, lr_min)
+      print("i=", i, ", lr = ", lr)
+      y_value.append(lr)
+  #
+  fig, ax = plt.subplots()
+  ax.plot(y_value)
+  plt.xlabel('epoch')
+  plt.ylabel('LR')
+  plt.title('Cyclic LR')
+  plt.show()
+
+
+#plot_cycle_lr(60000, 512, 24, 3, 0.3)
