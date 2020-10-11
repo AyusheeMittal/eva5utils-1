@@ -398,9 +398,9 @@ class LRRangeFinder(object):
                 total_loss = loss
             else:
                 total_loss += loss
-
-        self.optimizer.step()
+        
         total_acc = 100.0*running_corrects/processed
+        self.optimizer.step()
 
         return total_acc
 
