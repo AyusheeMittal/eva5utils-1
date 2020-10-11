@@ -1,6 +1,6 @@
 import torch
 
-def train(epochs, trainloader, model, device, optimizer, criterion, scheduler):
+def train_onecyclelr(epochs, trainloader, model, device, optimizer, criterion, scheduler):
     loss_accumulator = []
     acc_accumulator = []
 
