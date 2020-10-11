@@ -46,8 +46,8 @@ def model11_davidnet_train_transforms():
   transform = C.Compose([
     A.PadIfNeeded(min_height=36, min_width=36, border_mode=cv2.BORDER_CONSTANT,
         value=0.5),
-    A.RandomCrop(height=32, width=32, p=5.0),
-    A.HorizontalFlip(),
+    A.RandomCrop(height=32, width=32, p=1),
+    A.HorizontalFlip(p=0.5),
     A.Cutout(num_holes=1, max_h_size=8, max_w_size=8),
     P.ToTensor(dict (mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)))
     ])

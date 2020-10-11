@@ -28,8 +28,11 @@ def train_onecyclelr(epochs, trainloader, model, device, optimizer, criterion, s
             running_corrects += torch.sum(preds == labels.data).item()
             processed += len(data)
 
+            lr = optimizer.param_groups[0]['lr']
+
         print('[%d, %5d] loss: %.3f' %
               (epoch + 1, i + 1, running_loss))
+        print("LR is: ", lr)
 
         loss_accumulator.append(running_loss)
         acc_accumulator.append(100.0*running_corrects/processed)
