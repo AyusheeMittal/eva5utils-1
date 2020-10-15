@@ -65,4 +65,4 @@ class ResNet(nn.Module):
 
 
 def ModifiedResNet18():
-    return ResNet(BasicBlock, [2, 2, 2, 2], , num_classes=200)
+    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes=200)
