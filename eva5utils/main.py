@@ -30,5 +30,5 @@ plot_samples(train_loader)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.009, momentum=0.9)
 
-train_loop(epochs, train_loader, model, DEVICE, optimizer, criterion)
+train_loop(epochs, train_loader, model, DEVICE, optimizer, criterion, None, False)
 test_loop(test_loader, model, DEVICE, criterion)

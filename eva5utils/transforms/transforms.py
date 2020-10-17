@@ -53,3 +53,20 @@ def model11_davidnet_train_transforms():
     ])
   return lambda img: transform(image = np.array(img))["image"]
 
+
+def model12_train_transforms():
+  transform = C.Compose([
+    # A.PadIfNeeded(min_height=36, min_width=36, border_mode=cv2.BORDER_CONSTANT,
+    #     value=0.5),
+    A.RandomCrop(height=64, width=64),
+    A.HorizontalFlip(p=0.5),
+    A.Cutout(num_holes=1, max_h_size=32, max_w_size=32, p=1),
+    P.ToTensor(dict (mean=(0.4802, 0.4481, 0.3975), std=(0.2302, 0.2265, 0.2262)))
+    ])
+  return lambda img: transform(image = np.array(img))["image"]
+
+def model12_test_transforms():
+  transform = C.Compose([
+    P.ToTensor(dict (mean=(0.4802, 0.4481, 0.3975), std=(0.2302, 0.2265, 0.2262)))
+    ])
+  return lambda img: transform(image = np.array(img))["image"]
