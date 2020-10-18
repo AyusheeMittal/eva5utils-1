@@ -24,7 +24,7 @@ VERSION = '0.1.0'
 REQUIRED = [
     # 'requests', 'maya', 'records',
     'torch', 'numpy', 'matplotlib', 'torchsummary', 'torchvision', 'albumentations',
-    'opencv-python', 'Pillow', 'requests', 'tqdm'
+    'opencv-python', 'Pillow', 'requests', 'tqdm', 'pandas', 'sklearn'
 ]
 
 # What packages are optional?

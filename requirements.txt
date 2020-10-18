@@ -28,3 +28,5 @@ torchvision==0.7.0
 requests==2.24.0
 tqdm==4.50.2
 packaging
+pandas
+sklearn
