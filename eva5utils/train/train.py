@@ -29,6 +29,7 @@ def train_loop(epochs, trainloader, model, device, optimizer, criterion, schedul
 
         print('[%d, %5d] loss: %.3f' %
               (epoch + 1, i + 1, running_loss))
+        print("Accuracy: ", 100.0*running_corrects/processed) 
 
         loss_accumulator.append(running_loss)
         #acc_accumulator.append(running_corrects.double() / len(trainloader.dataset))
