@@ -32,8 +32,8 @@ def train_onecyclelr(epochs, trainloader, model, device, optimizer, criterion, s
 
         print('[%d, %5d] loss: %.3f' %
               (epoch + 1, i + 1, running_loss))
-        print("LR is: ", lr)
-        print("Accuracy is: ", 100.0*running_corrects/processed)
+        print("LR is: ", lr, "      Accuracy is: ", 100.0*running_corrects/processed)
+        #print("Accuracy is: ", 100.0*running_corrects/processed)
 
         loss_accumulator.append(running_loss)
         acc_accumulator.append(100.0*running_corrects/processed)
