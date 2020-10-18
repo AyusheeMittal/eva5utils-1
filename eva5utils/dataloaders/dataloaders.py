@@ -23,14 +23,16 @@ def load_cifar10(train_transform, test_transform, cuda_batch_size, cpu_batch_siz
     return (trainloader, testloader, classes)
 
 
-def load_tiny_imagenet(train_transform, test_transform, cuda_batch_size, cpu_batch_size=32, num_workers=2):
+def load_tiny_imagenet(train_transform, test_transform, train_split, cuda_batch_size, cpu_batch_size=32, num_workers=2):
     download_images()
     classes = class_names()
     print(len(classes))
 
     dataset = TinyImageNet(classes)
     print('Dataset length: ', len(dataset))
-    train_data, test_data = random_split(dataset, [77000, 33000])
+    train_split = len(dataset) * train_split //100
+    test_split = len(dataset) - train_split
+    train_data, test_data = random_split(dataset, [train_split, test_split])
     print('Trainset length: ', len(train_data))
     print('Testset length: ', len(test_data))
 
