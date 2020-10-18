@@ -31,19 +31,15 @@ def get_centroids(image_folder, annotated_file):
 	    # Loop through all the regions, calculate the centroid and then scale it
         # Each region has the top-left (x, y) coordinates, plus the height and width of bounding box
         for region in values["regions"]:
-            #class_name = region["region_attributes"]["Class"]
+            #class_name = region["region_attributes"]["Class"] if "Class" in region["region_attributes"] else "undefined"
             x = region["shape_attributes"]["x"]
             y = region["shape_attributes"]["y"]
             width = region["shape_attributes"]["width"]
             height = region["shape_attributes"]["height"]
+            bbx_w = width / im_width
+            bbx_h = height / im_height
             #print("Filename=", filename, ", class=", class_name, ", x=", x, ", y=", y, ", width=", width, ", height=", height)
-            centroid_x = x + width // 2
-            centroid_y = y + height // 2
-            scaled_x = centroid_x / im_width
-            scaled_y = centroid_y / im_height
-            #print("Centroid_x=", centroid_x, ", centroid_y=", centroid_y, ", scaled_x=", scaled_x, ", scaled_y=", scaled_y)
-            #datapoint = {"class": class_name, "centroid": (scaled_x, scaled_y)}
-            datapoint = [scaled_x, scaled_y]
+            datapoint = [bbx_w, bbx_h]
             centroids.append(datapoint)
 
     return centroids
